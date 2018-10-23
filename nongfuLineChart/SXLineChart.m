@@ -15,6 +15,10 @@
     UILabel *_dateLabel;
     UILabel *_changeLabel;
     UILabel *_indexLabel;
+    
+    NSMutableArray *_bottomLabels;
+    
+    NSArray *_leftLabelTextArray;
 }
 @end
 
@@ -57,6 +61,32 @@
         CGContextSetFillColorWithColor(graphContext, [UIColor colorWithWhite:1 alpha:0.16].CGColor);
         CGContextDrawPath(graphContext,kCGPathFill);
     }
+    
+    [self addAnimation];
+}
+
+- (void)addAnimation{
+    UIView *mask = [[UIView alloc] initWithFrame:CGRectMake(31, 39 - 3, self.frame.size.width - 31, self.frame.size.height - 39 + 3)];
+    mask.backgroundColor = Color_With_Rgb(43,124,86,1);
+    for (int i = 0; i < _leftLabelTextArray.count; i++) {
+        UIView *horizontalLine = [[UIView alloc] initWithFrame:CGRectMake(0, i * 18 + 3, self.frame.size.width - 31, 1)];
+        horizontalLine.backgroundColor = [UIColor whiteColor];
+        horizontalLine.alpha = 0.05;
+        [mask addSubview:horizontalLine];
+    }
+    [self addSubview:mask];
+    
+    for (UILabel *label in _bottomLabels) {
+        [self bringSubviewToFront:label];
+    }
+    
+    [UIView animateWithDuration:3 delay:0 options:UIViewAnimationOptionTransitionNone animations:^{
+        mask.frame = CGRectMake(self.frame.size.width, 39 - 2, self.frame.size.width - 31, self.frame.size.height - 39 + 2);
+    } completion:^(BOOL finished) {
+        [mask removeFromSuperview];
+    }];
+    
+    [self setClipsToBounds:YES];
 }
 
 - (void)addCircle{
@@ -148,12 +178,12 @@
 
 - (void)addLabelAndLine{
     //横坐标
-    NSArray *leftLabelTextArray = @[@"110.00",@"109.00",@"108.00",@"107.00"];
-    for (int i = 0; i < leftLabelTextArray.count; i++) {
+    _leftLabelTextArray = @[@"110.00",@"109.00",@"108.00",@"107.00"];
+    for (int i = 0; i < _leftLabelTextArray.count; i++) {
         UILabel *leftLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 36 + i * 18, 28, 7)];
         leftLabel.textAlignment = NSTextAlignmentRight;
         leftLabel.font =  [UIFont fontWithName:@"PingFang-SC-Medium" size:6.7];
-        leftLabel.text = leftLabelTextArray[i];
+        leftLabel.text = _leftLabelTextArray[i];
         leftLabel.alpha = 0.43;
         leftLabel.textColor = [UIColor whiteColor];
         [self addSubview:leftLabel];
@@ -166,6 +196,7 @@
     
     //纵坐标
     NSArray *bottomLabelTextArray = @[@"9.25",@"9.26",@"9.27",@"9.28",@"9.29",@"9.30"];
+    _bottomLabels = @[].mutableCopy;
     float bottomLabelSpace = (self.frame.size.width - 35 - 30) / (bottomLabelTextArray.count -1);
     for (int i = 0; i < bottomLabelTextArray.count; i++) {
         UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 30, 7)];
@@ -176,6 +207,7 @@
         bottomLabel.alpha = 0.43;
         bottomLabel.textColor = [UIColor whiteColor];
         [self addSubview:bottomLabel];
+        [_bottomLabels addObject:bottomLabel];
     }
 }
 

@@ -8,8 +8,11 @@
 
 #import "ViewController.h"
 #import "SXLineChart.h"
+#import "SDCycleScrollView/SDCycleScrollView.h"
 
 @interface ViewController ()
+
+@property( nonatomic, strong ) SDCycleScrollView * topScrollView;
 
 @end
 
