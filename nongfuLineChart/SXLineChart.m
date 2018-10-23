@@ -45,21 +45,15 @@
         [maskBottomPoints addObject:[NSValue valueWithCGPoint:bottomPoint]];
     }
     for (int i = 0; i < _pointsCenterArray.count - 1; i++) {
-        CGPoint firstPoint = CGPointMake([[maskBottomPoints objectAtIndex:i] CGPointValue].x - 0.125, [[maskBottomPoints objectAtIndex:i] CGPointValue].y);
-        CGPoint secondPoint = CGPointMake([[_pointsCenterArray objectAtIndex:i] CGPointValue].x - 0.125, [[_pointsCenterArray objectAtIndex:i] CGPointValue].y);
-        NSArray *maskPoints = @[[NSValue valueWithCGPoint:firstPoint],[NSValue valueWithCGPoint:secondPoint],[_pointsCenterArray objectAtIndex:i + 1],[maskBottomPoints objectAtIndex:i + 1]];
-        
-        CGContextRef graphContext = UIGraphicsGetCurrentContext();
-        CGContextBeginPath(graphContext);
-        CGPoint beginPoint = [[maskPoints objectAtIndex:0] CGPointValue];
-        CGContextMoveToPoint(graphContext, beginPoint.x, beginPoint.y);
+        NSArray *maskPoints = @[[_pointsCenterArray objectAtIndex:i],[_pointsCenterArray objectAtIndex:i + 1],[maskBottomPoints objectAtIndex:i + 1]];
+        UIBezierPath *path = [UIBezierPath bezierPath];
+        [path moveToPoint:[[maskBottomPoints objectAtIndex:i] CGPointValue]];
         for (NSValue* pointValue in maskPoints){
-            CGPoint point = [pointValue CGPointValue];
-            CGContextAddLineToPoint(graphContext, point.x, point.y);
+            [path addLineToPoint:[pointValue CGPointValue]];
         }
-        CGContextClosePath(graphContext);
-        CGContextSetFillColorWithColor(graphContext, [UIColor colorWithWhite:1 alpha:0.16].CGColor);
-        CGContextDrawPath(graphContext,kCGPathFill);
+        [path closePath];
+        [[UIColor colorWithWhite:1 alpha:0.16] setFill];
+        [path fill];
     }
     
     [self addAnimation];
